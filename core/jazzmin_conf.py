@@ -20,7 +20,7 @@ JAZZMIN_SETTINGS: dict = {
     # Copyright on the footer
     "copyright": "Digital_Office",
     # The model admin to search from the search bar, search bar omitted if excluded
-    "search_model": "",
+    "search_model": None,
     # Field name on user model that contains avatar ImageField/URLField/Charfield or a callable that receives the user
     "user_avatar": None,
     ############
@@ -50,7 +50,7 @@ JAZZMIN_SETTINGS: dict = {
     # Whether to aut expand the menu
     "navigation_expanded": False,
     # Hide these apps when generating side menu e.g (auth)
-    "hide_apps": [],
+    "hide_apps": "",
     # Hide these models when generating side menu (e.g auth.user)
     "hide_models": [],
     # List of apps (and/or models) to base side menu ordering off of (does not need to contain all apps/models)
@@ -64,8 +64,8 @@ JAZZMIN_SETTINGS: dict = {
         "users": "fas fa-duotone fa-user",
     },
     # Icons that are used when one is not manually specified
-    "default_icon_parents": "fas fa-list",
-    "default_icon_children": "fas fa-image-full-white",
+    "default_icon_parents": "fas fa-folder",
+    "default_icon_children": "fas fa-circle",
     #################
     # Related Modal #
     #################
@@ -104,29 +104,29 @@ JAZZMIN_UI_TWEAKS = {
     "footer_small_text": True,
     "body_small_text": False,
     "brand_small_text": False,
-    "brand_colour": False,
-    "accent": "accent-lightblue",
-    "navbar": "navbar-white navbar-light",
+    "brand_colour": "navbar-success",
+    "accent": "accent-navy",
+    "navbar": "navbar-primary navbar-dark",
     "no_navbar_border": False,
     "navbar_fixed": True,
     "layout_boxed": False,
-    "footer_fixed": False,
+    "footer_fixed": True,
     "sidebar_fixed": True,
-    "sidebar": "sidebar-dark-primary",
+    "sidebar": "sidebar-light-primary",
     "sidebar_nav_small_text": False,
     "sidebar_disable_expand": False,
     "sidebar_nav_child_indent": True,
     "sidebar_nav_compact_style": False,
     "sidebar_nav_legacy_style": False,
     "sidebar_nav_flat_style": True,
-    "theme": "litera",
+    "theme": "cosmo",
     "dark_mode_theme": None,
     "button_classes": {
         "primary": "btn-outline-primary",
         "secondary": "btn-outline-secondary",
-        "info": "btn-info",
-        "warning": "btn-warning",
-        "danger": "btn-danger",
-        "success": "btn-success",
+        "info": "btn-outline-info",
+        "warning": "btn-outline-warning",
+        "danger": "btn-outline-danger",
+        "success": "btn-outline-success",
     },
 }
