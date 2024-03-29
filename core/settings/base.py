@@ -75,7 +75,8 @@ MAX_FILE_UPLOAD_SIZE = {"50 MB": 5242880}
 
 MAX_VIDEO_UPLOAD_SIZE = {"50 MB": 5242880}
 
-ALLOWED_FILE_TYPES = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'zip', 'pptx', 'ppt',]
+ALLOWED_FILE_TYPES = ['pdf', 'doc', 'docx',
+                      'xls', 'xlsx', 'txt', 'zip', 'pptx', 'ppt',]
 
 ALLOWED_IMAGE_TYPES = ['jpg', 'jpeg', 'png', 'svg',]
 
@@ -238,7 +239,7 @@ CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": f"{env.str('REDIS_URL', 'redis://localhost:6379/0')}",
-        "KEY_PREFIX": "uz_chess",
+        "KEY_PREFIX": "starter",
     }
 }
 
