@@ -1,7 +1,8 @@
 Django==4.1.13
 psycopg2-binary==2.9.5
 python-environ==0.4.54
-django-cors-headers==3.13.0clear
+
+django-cors-headers==3.13.0
 
 django-jazzmin==2.6.0
 drf-yasg==1.21.4
@@ -10,9 +11,11 @@ django-filter==22.1
 django-phonenumber-field==7.0.2
 django-phonenumbers==1.0.1
 django-redis
-Pillow
+Pillow==10.1.0
 djangorestframework-simplejwt==5.2.2
 django-location-field
 beautifulsoup4
 django-celery-beat==2.4.0
 django-recaptcha
+# GDAL==L-3.8.4.tar.gz
+# wheel-0.43.0

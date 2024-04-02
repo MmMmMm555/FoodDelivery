@@ -49,6 +49,10 @@ DJANGO_APPS = [
 CUSTOM_APPS = [
     'apps.common',
     'apps.users',
+    'apps.foods',
+    'apps.branches',
+    'apps.orders',
+    'apps.verification',
 ]
 
 THIRD_PARTY_APPS = [
@@ -75,7 +79,8 @@ MAX_FILE_UPLOAD_SIZE = {"50 MB": 5242880}
 
 MAX_VIDEO_UPLOAD_SIZE = {"50 MB": 5242880}
 
-ALLOWED_FILE_TYPES = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt', 'zip', 'pptx', 'ppt',]
+ALLOWED_FILE_TYPES = ['pdf', 'doc', 'docx',
+                      'xls', 'xlsx', 'txt', 'zip', 'pptx', 'ppt',]
 
 ALLOWED_IMAGE_TYPES = ['jpg', 'jpeg', 'png', 'svg',]
 
@@ -84,6 +89,7 @@ ALLOWED_VIDEO_TYPES = ['mp4', 'mpeg', 'mpeg-4', 'm4v',]
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.SessionAuthentication",
+        'rest_framework.authentication.TokenAuthentication',
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_FILTER_BACKENDS": (
@@ -102,7 +108,7 @@ REST_FRAMEWORK = {
     },
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     "PAGE_SIZE": 10,
-    "EXCEPTION_HANDLER": "apps.common.execptionhandler.custom_exception_handler",
+    # "EXCEPTION_HANDLER": "apps.common.execptionhandler.custom_exception_handler",
     "DEFAULT_PARSER_CLASSES": [
         "rest_framework.parsers.MultiPartParser",
         "rest_framework.parsers.JSONParser",
@@ -160,7 +166,7 @@ DATABASES = {
     }
 }
 
-# AUTH_USER_MODEL = "users.User"
+AUTH_USER_MODEL = "users.User"
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -205,7 +211,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=10),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=30),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
@@ -238,7 +244,7 @@ CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
         "LOCATION": f"{env.str('REDIS_URL', 'redis://localhost:6379/0')}",
-        "KEY_PREFIX": "uz_chess",
+        "KEY_PREFIX": "delivery",
     }
 }
 
@@ -255,6 +261,8 @@ RECAPTCHA_PRIVATE_KEY = env.str("RECAPTCHA_PRIVATE_KEY")
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.yandex.ru"
+EMAIL_HOST_USER = env.str("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 
@@ -263,6 +271,5 @@ LOCATION_FIELD = {
     "map.provider": "openstreetmap",
     "search.provider": "nominatim",
 }
-
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000 * 10000

@@ -1,10 +1,10 @@
 JAZZMIN_SETTINGS: dict = {
     # title of the window (Will default to current_admin_site.site_title if absent or None)
-    "site_title": "Digital Office",
+    "site_title": "Food Delivery",
     # Title on the login screen (19 chars max) (defaults to current_admin_site.site_header if absent or None)
-    "site_header": "Digital Office",
+    "site_header": "Food Delivery",
     # Title on the brand (19 chars max) (defaults to current_admin_site.site_header if absent or None)
-    "site_brand": "Digital Office",
+    "site_brand": "Food Delivery",
     # Logo to use for your site, must be present in static files, used for brand on top left
     "site_logo": None,
     # Logo to use for your site, must be present in static files, used for login form logo (defaults to site_logo)
@@ -16,7 +16,7 @@ JAZZMIN_SETTINGS: dict = {
     # Relative path to a favicon for your site, will default to site_logo if absent (ideally 32x32 px)
     "site_icon": None,
     # Welcome text on the login screen
-    "welcome_sign": "Digital Office",
+    "welcome_sign": "Food Delivery",
     # Copyright on the footer
     "copyright": "Digital_Office",
     # The model admin to search from the search bar, search bar omitted if excluded
