@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 from datetime import timedelta
 from pathlib import Path
+from django.utils.translation import gettext_lazy as _
 
 import environ
 
@@ -38,11 +39,13 @@ ALLOWED_HOSTS = ["*"]
 # Application definition
 DJANGO_APPS = [
     "jazzmin",
+    "modeltranslation",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    'django.contrib.gis',
     "django.contrib.staticfiles",
 ]
 
@@ -61,8 +64,6 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "rest_framework_simplejwt",
     "location_field.apps.DefaultConfig",
-    # "captcha",
-    "django_celery_beat",
     "django_filters",
 ]
 
@@ -124,6 +125,7 @@ MIDDLEWARE = [
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
+    'django.middleware.locale.LocaleMiddleware',
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -189,7 +191,28 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+# languages
+MODELTRANSLATION_DEFAULT_LANGUAGE = "en"
+MODELTRANSLATION_LANGUAGES = ("uz", "ru", "en")
+MODELTRANSLATION_FALLBACK_LANGUAGES = ("uz", "ru", "en")
+MODELTRANSLATION_LANGUAGES_CHOICES = (
+    ("uz", _("o'zbekcha")),
+    ("ru", _("ruscha")),
+    ("en", _("inglizcha")),
+)
+
+LANGUAGES = (
+    ("uz", _("uzbek 🇺🇿")),
+    ("ru", _("russian 🇷🇺")),
+    ("en", _("english 🇺🇸")),
+)
+
+MODELTRANSLATION_TRANSLATION_FILES = (
+    'apps.branches.translations',
+    'apps.foods.traslations',
+)
+
+LANGUAGE_CODE = "uz"
 
 TIME_ZONE = "Asia/Tashkent"
 
@@ -249,15 +272,15 @@ CACHES = {
 }
 
 # CELERY CONFIGURATION
-CELERY_BROKER_URL = env.str("CELERY_BROKER_URL", "redis://localhost:6379")
-CELERY_RESULT_BACKEND = env.str("CELERY_BROKER_URL", "redis://localhost:6379")
-CELERY_TIMEZONE = "Asia/Tashkent"
-CELERY_TASK_TRACK_STARTED = True
-CELERY_TASK_TIME_LIMIT = 60 * 60 * 3
-CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
+# CELERY_BROKER_URL = env.str("CELERY_BROKER_URL", "redis://localhost:6379")
+# CELERY_RESULT_BACKEND = env.str("CELERY_BROKER_URL", "redis://localhost:6379")
+# CELERY_TIMEZONE = "Asia/Tashkent"
+# CELERY_TASK_TRACK_STARTED = True
+# CELERY_TASK_TIME_LIMIT = 60 * 60 * 3
+# CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
-RECAPTCHA_PUBLIC_KEY = env.str("RECAPTCHA_PUBLIC_KEY")
-RECAPTCHA_PRIVATE_KEY = env.str("RECAPTCHA_PRIVATE_KEY")
+# RECAPTCHA_PUBLIC_KEY = env.str("RECAPTCHA_PUBLIC_KEY")
+# RECAPTCHA_PRIVATE_KEY = env.str("RECAPTCHA_PRIVATE_KEY")
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.yandex.ru"
@@ -266,10 +289,13 @@ EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD")
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 
-# GOOGLE MAPS
-LOCATION_FIELD = {
-    "map.provider": "openstreetmap",
-    "search.provider": "nominatim",
-}
+EMAIL_CODE_TIMEOUT = 60 * 60  # 1 hour
+EMAIL_RESEND_TIMEOUT = 60 * 2  # 2 minute
+EMAIL_CODE_MAX_ATTEMPTS = 3  # 3 attempts
+EMAIL_VERIFIED_EMAIl_TIMEOUT = 60 * 60 * 2  # 2 hour
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000 * 10000
+
+# postGis
+GDAL_LIBRARY_PATH = r'C:\OSGeo4W\bin\gdal308'
+GEOS_LIBRARY_PATH = r'C:\OSGeo4W\bin\geos_c'

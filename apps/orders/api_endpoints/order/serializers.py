@@ -1,9 +1,12 @@
 from rest_framework.serializers import ModelSerializer, ValidationError
 from django.db import transaction
-from django.db.models import Sum, ExpressionWrapper, DurationField, F
+from django.db.models import Sum, ExpressionWrapper, DurationField, F, Count, FloatField
 
 from datetime import timedelta
 from geopy.distance import geodesic
+from django.contrib.gis.geos import GEOSGeometry, Point
+from django.contrib.gis.db.models.functions import Distance
+
 
 from apps.orders.models import Order, OrderItem, States
 from apps.branches.models import Branch
@@ -29,7 +32,8 @@ class OrderSerializer(ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ('id', 'payment_type', 'longitude', 'latitude', 'items',)
+        fields = ('id', 'payment_type', 'longitude',
+                  'latitude', 'items',)
 
     def create(self, validated_data):
         with transaction.atomic():
@@ -40,11 +44,25 @@ class OrderSerializer(ModelSerializer):
             latitude = validated_data.pop('latitude')
             order_items_data = validated_data.pop('items')
 
+            # Find nearest branch
+            nearest_branch = Branch.objects.annotate(distance=Distance(
+                F('location'),Point(latitude, longitude, srid=4326))*1,).order_by('distance').first()
+
+            # for branch in Branch.objects.all():
+            #     p2 = (branch.latitude, branch.longitude)
+            #     p2 = GEOSGeometry(
+            #         f"SRID=4326;POINT({branch.latitude} {branch.longitude})")
+            #     distance = p1.distance(p2) * 100
+            #     # geodesic(p1, p2).kilometers
+            #     if nearest_branch is None or distance < nearest_distance:
+            #         nearest_branch = branch
+            #         nearest_distance = distance
+
             # Calculate total price and total cooking time
             total_price = 0
             all_foods_amount = 0
             for item_data in order_items_data:
-                if item_data.get('food').available:
+                if item_data.get('food').available and item_data.get('food') in nearest_branch.branch_foods.all():
                     food = item_data['food']
                     amount = item_data['amount']
                     food_price = food.price
@@ -53,32 +71,17 @@ class OrderSerializer(ModelSerializer):
                 else:
                     raise ValidationError(
                         {'item': "food", 'info': "Not available food selected"})
-            all_cooking_time = Order.objects.filter(state=States.PREPARING).aggregate(
-                total_cooking_time=Sum(ExpressionWrapper(F("cooking_time"), output_field=DurationField())))
+
+            all_cooking_time = Order.objects.filter(state=States.WAITING, branch=nearest_branch).aggregate(
+                queue_amount=Count("items__amount"))
 
             cooking_time = timedelta(
-                minutes=all_foods_amount, seconds=15*all_foods_amount)
-            if all_cooking_time['total_cooking_time']:
-                cooking_time += all_cooking_time['total_cooking_time']
-
-            # Find nearest branch
-            p1 = (latitude, longitude)
-            nearest_branch = None
-            nearest_distance = None
-            for branch in Branch.objects.all():
-                p2 = (branch.latitude, branch.longitude)
-                distance = geodesic(p1, p2).kilometers
-                if nearest_branch is None or distance < nearest_distance:
-                    nearest_branch = branch
-                    nearest_distance = distance
-
-            # nearest_branch = Branch.objects.annotate(
-            #                                     distance=geodesic(p1, (F('latitude'), F('longitude'))).km
-            #                                 ).order_by('distance').first()
+                minutes=all_foods_amount+all_cooking_time['queue_amount'], seconds=15*(all_foods_amount+all_cooking_time['queue_amount']))
 
             # Calculate delivery time based on distance to nearest branch
-            delivery_time = timedelta(minutes=3 * nearest_distance)
-
+            delivery_time = timedelta(minutes=3*nearest_branch.distance)
+            print(nearest_branch.distance)
+            print(delivery_time)
             # Create the order
             order = Order.objects.create(
                 client=self.context['request'].user,
@@ -87,8 +90,7 @@ class OrderSerializer(ModelSerializer):
                 latitude=latitude,
                 branch=nearest_branch,
                 total_price=total_price,
-                cooking_time=cooking_time,
-                delivery_time=delivery_time
+                delivery_time=delivery_time+cooking_time
             )
 
             # Create order items
@@ -114,24 +116,39 @@ class OrderListSerializer(ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ('id', 'client', 'total_price', 'payment_type', 'state',
-                  'branch', 'delivery_time', 'cooking_time', 'cancelled', 'items',)
+        fields = ('id', 'client', 'total_price', 'payment_type', 'state', 'longitude',
+                  'latitude',
+                  'branch', 'delivery_time', 'cancelled', 'items',)
         read_only_fields = fields
 
 
 class OrderUpdateWaiterSerializer(ModelSerializer):
     class Meta:
         model = Order
-        fields = ('id', 'state',  'cancelled',)
+        fields = ('id', 'state', 'cancelled',)
 
 
 class OrderUpdateClientSerializer(ModelSerializer):
-    items = OrderItemSerializer(many=True)
 
     class Meta:
         model = Order
         fields = ('id', 'payment_type', 'longitude',
-                  'latitude', 'items', 'cancelled',)
+                  'latitude', 'cancelled',)
+        extra_kwargs = {
+            'longitude': {'required': False},
+            'latitude': {'required': False},
+        }
+
+    def validate(self, attrs):
+        if (attrs['cancelled'] and self.instance.cancelled):
+            raise ValidationError({'order': "order already cancelled"})
+        if (attrs['cancelled'] in [1, 0]) and self.instance.cancelled:
+            raise ValidationError({'order': "reorder is not allowed"})
+        if attrs['cancelled'] and (self.instance.state == States.DELIVERING):
+            raise ValidationError(
+                {'order': "you can not cancel now, order on the way"})
+
+        return super().validate(attrs)
 
    # def create(self, validated_data):
     #     with transaction.atomic():

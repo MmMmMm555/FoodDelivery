@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
-
+from django.contrib.gis.db.models import PointField
 from datetime import timedelta
 
 from apps.common.models import BaseModel
@@ -31,12 +31,13 @@ class Order(BaseModel):
                              choices=States.choices, default=States.WAITING)
     longitude = models.FloatField(_("longitude"))
     latitude = models.FloatField(_("latitude"))
+    # location = PointField(_("location"), geography=True, srid=4326)
     branch = models.ForeignKey(
         Branch, on_delete=models.CASCADE, related_name="orders", verbose_name=_("branch"))
     delivery_time = models.DurationField(
         _("delivery time"), default=timedelta(minutes=3))
-    cooking_time = models.DurationField(
-        _("cooking time"), default=timedelta(minutes=1, seconds=15))
+    # cooking_time = models.DurationField(
+    #     _("cooking time"), default=timedelta(minutes=1, seconds=15))
     cancelled = models.BooleanField(_("cancelled"), default=False)
 
     def __str__(self):

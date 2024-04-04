@@ -13,9 +13,9 @@ class UserRoles(models.TextChoices):
 
 class User(AbstractUser):
     username = None
-    email = models.EmailField(_("email address"), blank=True, unique=True)
+    email = models.EmailField(_("email address"), unique=True)
     role = models.CharField(_("role"), max_length=6, choices=UserRoles.choices, default=UserRoles.CLIENT)
-    branch = models.ForeignKey(Branch, verbose_name=_("branch"), related_name="waiters" , on_delete=models.SET_NULL, null=True)
+    branch = models.ForeignKey(Branch, verbose_name=_("branch"), related_name="waiters" , on_delete=models.SET_NULL, null=True, blank=True)
     
     objects = UserManager()
 

@@ -4,7 +4,7 @@ from .models import Order, OrderItem
 
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'client', 'payment_type', 'state',)
+    list_display = ('id', 'client', 'payment_type', 'state', 'cancelled',)
     list_editable = ('state',)
     search_fields = ('name',)
     list_filter = ('payment_type', 'state', 'branch', 'cancelled',)

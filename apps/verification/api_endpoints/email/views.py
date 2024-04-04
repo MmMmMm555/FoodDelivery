@@ -9,13 +9,9 @@ from django.utils.crypto import get_random_string
 from rest_framework import generics, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
+from django.conf import settings
+
 from . import serializers
-
-
-EMAIL_CODE_TIMEOUT = 60 * 60  # 1 hour
-EMAIL_RESEND_TIMEOUT = 60 * 2  # 2 minute
-EMAIL_CODE_MAX_ATTEMPTS = 3  # 3 attempts
-EMAIL_VERIFIED_EMAIl_TIMEOUT = 60 * 60 * 2  # 2 hour
 
 
 class EmailSendCodeView(generics.GenericAPIView):
@@ -32,7 +28,7 @@ class EmailSendCodeView(generics.GenericAPIView):
             f"{serializer.validated_data['email']}_*"))
         now = datetime.datetime.now()
         for old_send in old_sends:
-            if (now - old_sends[old_send]['send_at']).total_seconds() < EMAIL_RESEND_TIMEOUT:
+            if (now - old_sends[old_send]['send_at']).total_seconds() < settings.EMAIL_RESEND_TIMEOUT:
                 raise ValidationError({
                     'email': 'email_code_already_sent'
                 }, code='email_code_already_sent')
@@ -48,7 +44,7 @@ class EmailSendCodeView(generics.GenericAPIView):
         cache.set(
             f"{serializer.validated_data['email']}_{uuid}",
             data,
-            timeout=EMAIL_CODE_TIMEOUT
+            timeout=settings.EMAIL_CODE_TIMEOUT
         )
 
         self.send_code(data)
@@ -61,7 +57,8 @@ class EmailSendCodeView(generics.GenericAPIView):
     @staticmethod
     def send_code(data):
         subject = "'Food Delivery' verification"
-        content = render_to_string('email/verification.html', context={'code':data['code']})
+        content = render_to_string(
+            'email/verification.html', context={'code': data['code']})
         msg = EmailMessage(
             subject, content, settings.EMAIL_HOST_USER, [data['email']])
         msg.content_subtype = "html"
@@ -77,30 +74,36 @@ class EmailCheckCodeView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
         cache_data = cache.get_many(cache.keys(
             f"*_{serializer.validated_data['uuid']}"))
+        cache_data = list(cache_data.items())
         data = None
         cache_key = None
-        for key in cache_data:
-            cache_key = key
-            data = cache_data[key]
+        if cache_data:
+            data = cache_data[0][1]
+            cache_key = cache_data[0][0]
+
+        # for key in cache_data:
+        #     cache_key = key
+        #     data = cache_data['key']
+
         if data is None or data['verified']:
             raise ValidationError({
-                'code': 'email_invalid_code'
-            }, code='email_invalid_code')
+                'code': 'email_invalid'
+            }, code='email_invalid')
 
-        if data['attempts'] > EMAIL_CODE_MAX_ATTEMPTS:
+        if data['attempts'] > settings.EMAIL_CODE_MAX_ATTEMPTS:
             raise ValidationError({
                 'code': 'email_code_expired'
             }, code='email_code_expired')
 
         if data['code'] != serializer.validated_data['code']:
             data['attempts'] += 1
-            cache.set(cache_key, data, timeout=EMAIL_CODE_TIMEOUT)
+            cache.set(cache_key, data, timeout=settings.EMAIL_CODE_TIMEOUT)
             raise ValidationError({
                 'code': 'email_invalid_code'
             }, code='email_invalid_code')
 
         data['verified'] = True
-        cache.set(cache_key, data, timeout=EMAIL_VERIFIED_EMAIl_TIMEOUT)
+        cache.set(cache_key, data, timeout=settings.EMAIL_VERIFIED_EMAIl_TIMEOUT)
 
         return Response(
             {'verified': True},

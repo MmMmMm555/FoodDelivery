@@ -48,16 +48,16 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
             return (IsAuthenticated(),)
         elif self.request.method == 'DELETE':
             return (IsAdmin(),)
-        return (IsClient() or IsWaiter(),)
+        return super().get_permissions()
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return OrderListSerializer
-        elif self.request.method in ['PUT', 'PATCH', 'DELETE'] and self.request.user.role == UserRoles.CLIENT:
+        if self.request.method in ['PUT', 'PATCH'] and self.request.user.role == UserRoles.CLIENT:
             return OrderUpdateClientSerializer
-        elif self.request.method in ['PUT', 'PATCH'] and self.request.user.role == UserRoles.WAITER:
+        if self.request.method in ['PUT', 'PATCH'] and self.request.user.role == UserRoles.WAITER:
             return OrderUpdateWaiterSerializer
-    
+
     def get_queryset(self):
         if self.request.user.role == UserRoles.CLIENT:
             return self.queryset.filter(client=self.request.user)

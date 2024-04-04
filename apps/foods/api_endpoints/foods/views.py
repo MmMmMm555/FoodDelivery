@@ -1,7 +1,7 @@
 from rest_framework.generics import (
     ListCreateAPIView, RetrieveUpdateDestroyAPIView)
 from rest_framework.parsers import FormParser, MultiPartParser
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny
 
 from .serializers import (FoodCreateSerializer,
                           FoodListSerializer, FoodUpdateSerializer)
@@ -24,7 +24,7 @@ class FoodListCreateView(ListCreateAPIView):
     
     def get_permissions(self):
         if self.request.method == 'GET':
-            return (IsAuthenticated(),)
+            return (AllowAny(),)
         return (IsAdmin() or IsWaiter(),)
 
 

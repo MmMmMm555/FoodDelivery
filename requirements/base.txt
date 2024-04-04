@@ -16,5 +16,5 @@ django-location-field
 beautifulsoup4
 django-celery-beat==2.4.0
 django-recaptcha
-# GDAL==L-3.8.4.tar.gz
-# wheel-0.43.0
+wheel-0.43.0
+django-modeltranslation==0.18.11
