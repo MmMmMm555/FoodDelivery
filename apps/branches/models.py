@@ -10,8 +10,6 @@ class Branch(models.Model):
     name = models.CharField(_("name"), max_length=100)
     address = models.CharField(_("address"), max_length=200)
     branch_contact = PhoneNumberField(_("branch_contact"))
-    longitude = models.FloatField(_("longitude"))
-    latitude = models.FloatField(_("latitude"))
     location = PointField(_("location"), geography=True, srid=4326, null=True)
     branch_foods = models.ManyToManyField(Food, verbose_name=_(
         "branch_foods"), related_name='branch_foods')
@@ -20,5 +18,6 @@ class Branch(models.Model):
         return self.name
 
     class Meta:
+        db_table = 'branches'
         verbose_name = 'Branch '
         verbose_name_plural = 'Branches '

@@ -10,9 +10,9 @@ from apps.common.permissions import IsAdmin, IsWaiter
 class BranchListCreateView(ListCreateAPIView):
     queryset = Branch.objects.all()
     serializer_class = BranchSerializer
+    permission_classes = [IsAdmin | IsWaiter,]
     parser_classes = (FormParser, MultiPartParser)
     search_fields = ['name', 'address',]
-    
 
 
 class BranchRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):

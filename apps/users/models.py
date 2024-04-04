@@ -16,8 +16,9 @@ class User(AbstractUser):
     email = models.EmailField(_("email address"), unique=True)
     role = models.CharField(_("role"), max_length=6, choices=UserRoles.choices, default=UserRoles.CLIENT)
     branch = models.ForeignKey(Branch, verbose_name=_("branch"), related_name="waiters" , on_delete=models.SET_NULL, null=True, blank=True)
-    
+
     objects = UserManager()
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
+    

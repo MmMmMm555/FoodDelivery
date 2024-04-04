@@ -29,21 +29,18 @@ class Order(BaseModel):
         _("payment type"), max_length=4, choices=PaymentTypes.choices, default=PaymentTypes.CASH)
     state = models.CharField(_("state"), max_length=10,
                              choices=States.choices, default=States.WAITING)
-    longitude = models.FloatField(_("longitude"))
-    latitude = models.FloatField(_("latitude"))
-    # location = PointField(_("location"), geography=True, srid=4326)
+    location = PointField(_("location"), geography=True, srid=4326)
     branch = models.ForeignKey(
         Branch, on_delete=models.CASCADE, related_name="orders", verbose_name=_("branch"))
     delivery_time = models.DurationField(
         _("delivery time"), default=timedelta(minutes=3))
-    # cooking_time = models.DurationField(
-    #     _("cooking time"), default=timedelta(minutes=1, seconds=15))
     cancelled = models.BooleanField(_("cancelled"), default=False)
 
     def __str__(self):
         return self.client.email
 
     class Meta:
+        db_table = 'orders'
         verbose_name = _('Order ')
         verbose_name_plural = _('Orders ')
 
@@ -63,5 +60,6 @@ class OrderItem(BaseModel):
         return self.food.name
 
     class Meta:
+        db_table = 'order_items'
         verbose_name = _('Order Item ')
         verbose_name_plural = _('Order Items ')
