@@ -36,6 +36,10 @@ DEBUG = env.bool("DEBUG")
 
 ALLOWED_HOSTS = ["*"]
 
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
+
 # Application definition
 DJANGO_APPS = [
     "jazzmin",
@@ -65,6 +69,7 @@ THIRD_PARTY_APPS = [
     "rest_framework_simplejwt",
     "location_field.apps.DefaultConfig",
     "django_filters",
+    "debug_toolbar",
 ]
 
 # 2.5MB - 2621440
@@ -131,6 +136,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "apps.common.middlewares.FingerPrintMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -270,17 +276,6 @@ CACHES = {
         "KEY_PREFIX": "delivery",
     }
 }
-
-# CELERY CONFIGURATION
-# CELERY_BROKER_URL = env.str("CELERY_BROKER_URL", "redis://localhost:6379")
-# CELERY_RESULT_BACKEND = env.str("CELERY_BROKER_URL", "redis://localhost:6379")
-# CELERY_TIMEZONE = "Asia/Tashkent"
-# CELERY_TASK_TRACK_STARTED = True
-# CELERY_TASK_TIME_LIMIT = 60 * 60 * 3
-# CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
-
-# RECAPTCHA_PUBLIC_KEY = env.str("RECAPTCHA_PUBLIC_KEY")
-# RECAPTCHA_PRIVATE_KEY = env.str("RECAPTCHA_PRIVATE_KEY")
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.yandex.ru"

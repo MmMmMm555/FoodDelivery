@@ -3,7 +3,7 @@ from django.db import transaction
 from django.db.models import F, Count
 
 from datetime import timedelta
-from django.contrib.gis.geos import Point, GEOSGeometry
+from django.contrib.gis.geos import GEOSGeometry
 from django.contrib.gis.db.models.functions import Distance
 
 from apps.orders.models import Order, OrderItem, States

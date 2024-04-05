@@ -13,7 +13,7 @@ class FoodListCreateView(ListCreateAPIView):
     queryset = Food.objects.all().select_related(
         'category').prefetch_related('images')
     serializer_class = FoodCreateSerializer
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (MultiPartParser, JSONParser,)
     permission_classes = (IsAdmin | IsWaiter,)
     search_fields = ('name',)
     filterset_fields = ('category', 'available',)

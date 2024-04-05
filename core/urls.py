@@ -22,6 +22,7 @@ urlpatterns += i18n_patterns(
 )
 
 urlpatterns += swagger_urlpatterns
+urlpatterns += [path("__debug__/", include("debug_toolbar.urls")),]
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
