@@ -8,13 +8,13 @@ drf-yasg==1.21.4
 djangorestframework==3.14.0
 django-filter==22.1
 django-phonenumber-field==7.0.2
-django-phonenumbers==1.0.1
-django-redis
+# django-phonenumbers==1.0.1
+# django-redis
 Pillow==10.1.0
 djangorestframework-simplejwt==5.2.2
-django-location-field
-beautifulsoup4
-django-celery-beat==2.4.0
-django-recaptcha
-wheel-0.43.0
+# django-location-field
+beautifulsoup4==4.12.3
+# django-celery-beat==2.4.0
+# django-recaptcha
+wheel==0.43.0
 django-modeltranslation==0.18.11

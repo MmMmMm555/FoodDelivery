@@ -18,7 +18,7 @@ class States(models.TextChoices):
     WAITING = "waiting", _("waiting")
     PREPARING = "preparing", _("preparing")
     DELIVERING = "delivering", _("delivering")
-
+    CANCELLED = "cancelled", _("cancelled")
 
 class Order(BaseModel):
     client = models.ForeignKey(User, verbose_name=_(
@@ -34,7 +34,6 @@ class Order(BaseModel):
         Branch, on_delete=models.CASCADE, related_name="orders", verbose_name=_("branch"))
     delivery_time = models.DurationField(
         _("delivery time"), default=timedelta(minutes=3))
-    cancelled = models.BooleanField(_("cancelled"), default=False)
 
     def __str__(self):
         return self.client.email

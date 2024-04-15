@@ -109,33 +109,33 @@ class OrderListSerializer(ModelSerializer):
     class Meta:
         model = Order
         fields = ('id', 'client', 'total_price', 'payment_type', 'state', 'location',
-                  'branch', 'delivery_time', 'cancelled', 'items',)
+                  'branch', 'delivery_time', 'items',)
         read_only_fields = fields
 
 
 class OrderUpdateWaiterSerializer(ModelSerializer):
     class Meta:
         model = Order
-        fields = ('id', 'state', 'cancelled',)
+        fields = ('id', 'state',)
 
 
 class OrderUpdateClientSerializer(ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ('id', 'payment_type', 'location', 'cancelled',)
+        fields = ('id', 'payment_type', 'location', 'state')
         extra_kwargs = {
             'longitude': {'required': False},
             'latitude': {'required': False},
         }
 
     def validate(self, attrs):
-        if (attrs['cancelled'] and self.instance.cancelled):
+        if (attrs['state'] and self.instance.state) == States.CANCELLED:
             raise ValidationError({'order': "order already cancelled"})
-        if (attrs['cancelled'] in [1, 0]) and self.instance.cancelled:
+        if attrs['state'] != States.CANCELLED and self.instance.state == States.CANCELLED:
             raise ValidationError({'order': "reorder is not allowed"})
-        if attrs['cancelled'] and (self.instance.state == States.DELIVERING):
+        if attrs['state'] == States.CANCELLED and (self.instance.state == States.DELIVERING):
             raise ValidationError(
-                {'order': "you can not cancel now, order on the way"})
+                {'order': "you can not cancel the order now, order on the way"})
 
         return super().validate(attrs)
