@@ -103,7 +103,7 @@ class EmailCheckCodeView(generics.GenericAPIView):
             }, code='email_invalid_code')
 
         data['verified'] = True
-        cache.set(cache_key, data, timeout=settings.EMAIL_VERIFIED_EMAIl_TIMEOUT)
+        cache.set(cache_key, data, timeout=settings.EMAIL_VERIFIED_EMAIL_TIMEOUT)
 
         return Response(
             {'verified': True},

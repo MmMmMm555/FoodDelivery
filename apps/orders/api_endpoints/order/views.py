@@ -15,7 +15,7 @@ class OrderListCreateView(ListCreateAPIView):
     serializer_class = OrderSerializer
     permission_classes = (IsClient,)
     parser_classes = (JSONParser,)
-    filterset_fields = ('state', 'cancelled', 'payment_type',
+    filterset_fields = ('state', 'payment_type',
                         'created_at', 'updated_at',)
 
     def get_serializer_class(self):
@@ -53,10 +53,11 @@ class OrderRetrieveUpdateDestroyView(RetrieveUpdateDestroyAPIView):
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return OrderListSerializer
-        if self.request.method in ['PUT', 'PATCH'] and self.request.user.role == UserRoles.CLIENT:
+        elif self.request.method !="GET" and self.request.user.role == UserRoles.CLIENT:
             return OrderUpdateClientSerializer
-        if self.request.method in ['PUT', 'PATCH'] and self.request.user.role == UserRoles.WAITER:
+        elif self.request.method !="GET" and self.request.user.role == UserRoles.WAITER:
             return OrderUpdateWaiterSerializer
+        return self.serializer_class
 
     def get_queryset(self):
         if self.request.user.role == UserRoles.CLIENT:

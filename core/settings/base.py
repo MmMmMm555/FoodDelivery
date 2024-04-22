@@ -272,7 +272,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": f"{env.str('REDIS_URL', 'redis://localhost:6379/0')}",
+        "LOCATION": f"{env.str('REDIS_URL', 'redis://redis:6379/0')}",
         "KEY_PREFIX": "delivery",
     }
 }
@@ -287,10 +287,10 @@ EMAIL_PORT = 587
 EMAIL_CODE_TIMEOUT = 60 * 60  # 1 hour
 EMAIL_RESEND_TIMEOUT = 60 * 2  # 2 minute
 EMAIL_CODE_MAX_ATTEMPTS = 3  # 3 attempts
-EMAIL_VERIFIED_EMAIl_TIMEOUT = 60 * 60 * 2  # 2 hour
+EMAIL_VERIFIED_EMAIL_TIMEOUT = 60 * 60 * 2  # 2 hour
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000 * 10000
 
 # postGis
-GDAL_LIBRARY_PATH = r'C:\OSGeo4W\bin\gdal308'
-GEOS_LIBRARY_PATH = r'C:\OSGeo4W\bin\geos_c'
+# GDAL_LIBRARY_PATH = r'C:\OSGeo4W\bin\gdal304.dll.orig'
+# GEOS_LIBRARY_PATH = r'C:\OSGeo4W\bin\geos_c'
