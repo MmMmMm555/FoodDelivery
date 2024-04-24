@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.gis.db.models import PointField
+from django.contrib.gis.db.models import PointField, PolygonField
 from django.utils.translation import gettext_lazy as _
 from django.core.validators import MinValueValidator, MaxValueValidator
 
@@ -31,6 +31,7 @@ class BranchComments(BaseModel):
     client = models.ForeignKey('users.User', on_delete=models.CASCADE, verbose_name=_("client"), related_name="branch_comments")
     rating = models.IntegerField(verbose_name=_("rating"), validators=[MinValueValidator(1), MaxValueValidator(5)])
     comment = models.TextField(verbose_name=_("comment"), null=True, blank=True)
+    area = PolygonField(_("area"), geography=True, srid=4326, null=True, blank=True)
 
     def __str__(self):
         return self.client.first_name

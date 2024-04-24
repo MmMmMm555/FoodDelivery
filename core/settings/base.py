@@ -14,6 +14,7 @@ from pathlib import Path
 from django.utils.translation import gettext_lazy as _
 
 import environ
+import os
 
 from core.jazzmin_conf import *  # noqa
 
@@ -39,6 +40,16 @@ ALLOWED_HOSTS = ["*"]
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+
+if os.name == 'nt':
+    import platform
+    OSGEO4W = r"C:\OSGeo4W"
+
+    assert os.path.isdir(OSGEO4W), "Directory does not exist: " + OSGEO4W
+    os.environ['OSGEO4W_ROOT'] = OSGEO4W
+    os.environ['GDAL_DATA'] = OSGEO4W + r"\share\gdal"
+    os.environ['PROJ_LIB'] = OSGEO4W + r"\share\proj"
+    os.environ['PATH'] = OSGEO4W + r"\bin;" + os.environ['PATH']
 
 # Application definition
 DJANGO_APPS = [
@@ -292,5 +303,5 @@ EMAIL_VERIFIED_EMAIL_TIMEOUT = 60 * 60 * 2  # 2 hour
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000 * 10000
 
 # postGis
-# GDAL_LIBRARY_PATH = r'C:\OSGeo4W\bin\gdal304.dll.orig'
+# GDAL_LIBRARY_PATH = r'C:\OSGeo4W\bin\gdal308'
 # GEOS_LIBRARY_PATH = r'C:\OSGeo4W\bin\geos_c'

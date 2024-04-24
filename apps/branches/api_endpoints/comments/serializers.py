@@ -21,6 +21,9 @@ class BranchCommentSerializer(ModelSerializer):
         model = BranchComments
         fields = ('id', 'client', 'branch', 'rating', 'comment',)
 
+    def validate(self, attrs):
+        if attrs['branch']
+        return super().validate(attrs)
 
 class BranchCommentListSerializer(ModelSerializer):
     client = CommentClientSerializer(read_only=True)
@@ -28,7 +31,7 @@ class BranchCommentListSerializer(ModelSerializer):
 
     class Meta:
         model = BranchComments
-        fields = ('id', 'branch', 'client', 'rating', 'comment', 'created_at', 'updated_at',)
+        fields = ('id', 'branch', 'client', 'rating', 'comment', 'area', 'created_at', 'updated_at',)
 
 
 class BranchCommentUpdateSerializer(ModelSerializer):
