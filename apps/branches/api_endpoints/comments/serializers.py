@@ -1,8 +1,8 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, ValidationError
 
 from apps.branches.models import BranchComments, Branch
 from apps.users.models import User
-
+from django.contrib.gis.geos import GEOSGeometry
 
 class CommentBranchSerializer(ModelSerializer):
     class Meta:
@@ -19,11 +19,15 @@ class CommentClientSerializer(ModelSerializer):
 class BranchCommentSerializer(ModelSerializer):
     class Meta:
         model = BranchComments
-        fields = ('id', 'client', 'branch', 'rating', 'comment',)
+        fields = ('id', 'client', 'branch', 'rating', 'comment', 'area',)
 
     def validate(self, attrs):
-        if attrs['branch']
+        point = GEOSGeometry(attrs['branch'].location)
+        polygon = GEOSGeometry(attrs['area'])
+        if not point.within(polygon):
+            raise ValidationError('you can not comment here')
         return super().validate(attrs)
+    
 
 class BranchCommentListSerializer(ModelSerializer):
     client = CommentClientSerializer(read_only=True)

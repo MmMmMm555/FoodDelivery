@@ -10,7 +10,7 @@ from apps.common.permissions import IsClient, IsAdmin, IsCommentOwner
 class CommentListCreateView(ListCreateAPIView):
     queryset = BranchComments.objects.all().select_related('branch', 'client')
     serializer_class = BranchCommentSerializer
-    parser_classes = (FormParser,)
+    parser_classes = (FormParser, MultiPartParser,)
     permission_classes = (IsClient,)
     filterset_fields = ('branch', 'rating')
 

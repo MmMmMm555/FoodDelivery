@@ -2,6 +2,7 @@ from rest_framework.generics import (
     ListCreateAPIView, RetrieveUpdateDestroyAPIView)
 from rest_framework.parsers import FormParser, MultiPartParser
 
+
 from .serializers import BranchSerializer, BranchUpdateSerializer
 from apps.branches.models import Branch
 from apps.common.permissions import IsAdmin, IsWaiter
